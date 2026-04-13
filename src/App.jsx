@@ -7,7 +7,7 @@ import LawDetail from './pages/LawDetail'
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/Rule">
       <div className="min-h-screen bg-[#f0f4f9]">
         <Navbar />
         <Routes>
