@@ -3,7 +3,7 @@ import LawCard from '../components/LawCard'
 import { searchLaws } from '../api/lawApi'
 import { mockLaws } from '../data/mockLaws'
 
-const CATEGORIES = ['전체', '주거', '청년', '창업·사업', '의료·건강', '육아·가족']
+const CATEGORIES = ['전체', '주거', '청년', '창업·사업', '의료·건강', '육아·가족', '기타']
 
 const CATEGORY_QUERIES = {
   전체: '생활',
@@ -12,6 +12,7 @@ const CATEGORY_QUERIES = {
   '창업·사업': '소상공인 창업',
   '의료·건강': '의료 건강보험',
   '육아·가족': '육아 출산 가족',
+  기타: '행정 규정',
 }
 
 function Spinner() {
@@ -86,16 +87,18 @@ export default function Home() {
     return fetchLaws(selectedCategory)
   }, [selectedCategory])
 
-  // 카테고리는 API가 처리 → 제목/태그 텍스트 검색만 클라이언트에서
+  // API가 키워드로 1차 필터 → 클라이언트에서 category 정확도 보정 + 텍스트 검색
   const filtered = [...laws]
     .sort((a, b) => new Date(b.effectDate) - new Date(a.effectDate))
     .filter((law) => {
-      if (!searchQuery) return true
-      return (
+      const matchCategory =
+        selectedCategory === '전체' || law.category === selectedCategory
+      const matchSearch =
+        !searchQuery ||
         law.title.includes(searchQuery) ||
         law.summary.includes(searchQuery) ||
         (law.tags ?? []).some((t) => t.includes(searchQuery))
-      )
+      return matchCategory && matchSearch
     })
 
   const newCount = laws.filter((l) => l.status === '신규' || l.status === '제정').length

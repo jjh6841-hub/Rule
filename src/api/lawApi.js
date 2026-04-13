@@ -28,19 +28,33 @@ function mapStatus(code) {
   return map[code] ?? '현행'
 }
 
-/** 법령명 + 검색어로 카테고리 추론 */
-const CATEGORY_RULES = [
-  { kw: ['전세', '임대', '주거', '주택', '부동산', '임차', '분양'], cat: '주거' },
-  { kw: ['청년', '대학생', '취업', '구직'], cat: '청년' },
-  { kw: ['소상공인', '창업', '중소기업', '벤처', '자영업', '사업자'], cat: '창업·사업' },
-  { kw: ['의료', '건강보험', '병원', '약사', '의사', '의약품', '간호'], cat: '의료·건강' },
-  { kw: ['육아', '출산', '보육', '어린이', '아동', '가족', '유아'], cat: '육아·가족' },
+/** 법령명 키워드 기반 카테고리 규칙 (우선순위 순) */
+const TITLE_RULES = [
+  { kw: ['전세', '임대', '주거', '부동산', '토지', '주택', '임차', '분양'], cat: '주거' },
+  { kw: ['청년', '대학', '학생', '취업'], cat: '청년' },
+  { kw: ['소상공인', '창업', '중소기업', '자영업', '벤처'], cat: '창업·사업' },
+  { kw: ['의료', '건강', '병원', '보건', '국민건강', '의약품', '약사', '간호', '의사'], cat: '의료·건강' },
+  { kw: ['육아', '출산', '가족', '아동', '보육', '양육', '어린이', '유아'], cat: '육아·가족' },
 ]
 
-function guessCategory(title = '', query = '') {
-  const text = `${title} ${query}`
-  for (const { kw, cat } of CATEGORY_RULES) {
-    if (kw.some((k) => text.includes(k))) return cat
+/** 소관부처명 기반 카테고리 규칙 (법령명 매핑 실패 시 적용) */
+const DEPT_RULES = [
+  { kw: ['국토교통부'], cat: '주거' },
+  { kw: ['보건복지부', '식품의약품'], cat: '의료·건강' },
+  { kw: ['고용노동부'], cat: '창업·사업' },
+]
+
+/**
+ * 법령명 + 소관부처 + 검색어로 카테고리 추론
+ * 우선순위: 법령명 키워드 > 소관부처명 > 기타
+ */
+function guessCategory(title = '', dept = '', query = '') {
+  const titleText = `${title} ${query}`
+  for (const { kw, cat } of TITLE_RULES) {
+    if (kw.some((k) => titleText.includes(k))) return cat
+  }
+  for (const { kw, cat } of DEPT_RULES) {
+    if (kw.some((k) => dept.includes(k))) return cat
   }
   return '기타'
 }
@@ -71,7 +85,7 @@ function transformLaw(raw, query = '') {
   return {
     id: String(id),
     title,
-    category: guessCategory(title, query),
+    category: guessCategory(title, dept, query),
     status: mapStatus(statusCode),
     summary: [dept, type].filter(Boolean).join(' · ') || '법제처 제공 법령',
     effectDate: formatDate(get('시행일자')),

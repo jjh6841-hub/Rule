@@ -1,9 +1,34 @@
+import { useState, useEffect, useRef } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 
 const navItems = [
   { path: '/', label: '홈', icon: HomeIcon },
   { path: '/my-laws', label: '내 법령', icon: BookIcon },
   { path: '/profile', label: '내 정보', icon: UserIcon },
+]
+
+const NOTIFICATIONS = [
+  {
+    id: 1,
+    icon: '📋',
+    title: '새 법령 업데이트',
+    body: '육아휴직 급여 인상 및 사용 요건 완화 법령이 2025-05-01 시행됩니다.',
+    time: '방금 전',
+  },
+  {
+    id: 2,
+    icon: '🏠',
+    title: '주거 카테고리 법령 추가',
+    body: '전세사기피해자 지원 특별법이 신규 등록되었습니다.',
+    time: '1시간 전',
+  },
+  {
+    id: 3,
+    icon: '🔔',
+    title: '시행일 D-30 알림',
+    body: '국민건강보험법 실손보험 연계 개정안이 2025-07-01 시행 예정입니다.',
+    time: '어제',
+  },
 ]
 
 function HomeIcon({ active }) {
@@ -35,6 +60,26 @@ function UserIcon({ active }) {
 
 export default function Navbar() {
   const location = useLocation()
+  const [notifOpen, setNotifOpen] = useState(false)
+  const [hasUnread, setHasUnread] = useState(true)
+  const notifRef = useRef(null)
+
+  // 패널 외부 클릭 시 닫기
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (notifRef.current && !notifRef.current.contains(e.target)) {
+        setNotifOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  const handleBellClick = () => {
+    const opening = !notifOpen
+    setNotifOpen(opening)
+    if (opening) setHasUnread(false) // 열면 읽음 처리
+  }
 
   return (
     <header className="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-gray-100 shadow-sm">
@@ -74,14 +119,52 @@ export default function Navbar() {
           })}
         </nav>
 
-        {/* 알림 버튼 */}
-        <button className="relative w-9 h-9 flex items-center justify-center rounded-xl hover:bg-gray-100 text-gray-500 transition-colors">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" />
-            <path d="M13.73 21a2 2 0 01-3.46 0" />
-          </svg>
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white" />
-        </button>
+        {/* 알림 버튼 + 드롭다운 */}
+        <div className="relative" ref={notifRef}>
+          <button
+            onClick={handleBellClick}
+            className={`relative w-9 h-9 flex items-center justify-center rounded-xl transition-colors
+              ${notifOpen ? 'bg-gray-100 text-[#1a3c6e]' : 'hover:bg-gray-100 text-gray-500'}`}
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9" />
+              <path d="M13.73 21a2 2 0 01-3.46 0" />
+            </svg>
+            {hasUnread && (
+              <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full border-2 border-white" />
+            )}
+          </button>
+
+          {/* 알림 드롭다운 패널 */}
+          {notifOpen && (
+            <div className="absolute right-0 top-full mt-2 w-80 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+              {/* 패널 헤더 */}
+              <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
+                <h3 className="text-sm font-semibold text-gray-900">알림</h3>
+                <span className="text-xs text-gray-400">{NOTIFICATIONS.length}개</span>
+              </div>
+
+              {/* 알림 목록 */}
+              <ul className="divide-y divide-gray-50">
+                {NOTIFICATIONS.map((n) => (
+                  <li key={n.id} className="flex items-start gap-3 px-4 py-3.5 hover:bg-gray-50 transition-colors cursor-default">
+                    <span className="text-xl shrink-0 mt-0.5">{n.icon}</span>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-gray-900 leading-snug">{n.title}</p>
+                      <p className="text-xs text-gray-500 mt-0.5 leading-relaxed">{n.body}</p>
+                      <p className="text-xs text-gray-400 mt-1.5">{n.time}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+
+              {/* 패널 푸터 */}
+              <div className="px-4 py-3 border-t border-gray-100 bg-gray-50">
+                <p className="text-xs text-center text-gray-400">모든 알림을 확인했습니다</p>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* 모바일 하단 탭바 */}
