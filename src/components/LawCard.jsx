@@ -2,24 +2,21 @@ import { Link } from 'react-router-dom'
 import CategoryTag from './CategoryTag'
 import { statusStyles } from '../data/mockLaws'
 
-function CardContent({ law, status }) {
+const BASE_CLASS = `group block bg-white rounded-2xl border border-gray-100 p-5 shadow-sm
+  hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer`
+
+export default function LawCard({ law }) {
+  const status = statusStyles[law.status] ?? { bg: 'bg-gray-400', text: 'text-white' }
+
   return (
-    <>
+    // state로 law 전체를 전달 → LawDetail에서 재사용
+    <Link to={`/law/${law.id}`} state={law} className={BASE_CLASS}>
       {/* 헤더: 카테고리 + 상태 배지 */}
       <div className="flex items-center justify-between mb-3">
         <CategoryTag category={law.category} />
-        <div className="flex items-center gap-1.5">
-          {law.isExternal && (
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-300">
-              <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" />
-              <polyline points="15 3 21 3 21 9" />
-              <line x1="10" y1="14" x2="21" y2="3" />
-            </svg>
-          )}
-          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${status.bg} ${status.text}`}>
-            {law.status}
-          </span>
-        </div>
+        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${status.bg} ${status.text}`}>
+          {law.status}
+        </span>
       </div>
 
       {/* 법령 제목 */}
@@ -39,7 +36,7 @@ function CardContent({ law, status }) {
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
               <polyline points="20 6 9 17 4 12" />
             </svg>
-            {law.isExternal ? '법령 안내' : '받을 수 있는 혜택'}
+            받을 수 있는 혜택
           </p>
           <p className="text-xs text-blue-700 leading-relaxed line-clamp-2">{law.benefit}</p>
         </div>
@@ -60,34 +57,6 @@ function CardContent({ law, status }) {
           </span>
         )}
       </div>
-    </>
-  )
-}
-
-const BASE_CLASS = `group block bg-white rounded-2xl border border-gray-100 p-5 shadow-sm
-  hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 cursor-pointer`
-
-export default function LawCard({ law }) {
-  const status = statusStyles[law.status] ?? { bg: 'bg-gray-400', text: 'text-white' }
-
-  // 법제처 API 데이터 → 외부 링크
-  if (law.isExternal && law.detailUrl) {
-    return (
-      <a
-        href={law.detailUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={BASE_CLASS}
-      >
-        <CardContent law={law} status={status} />
-      </a>
-    )
-  }
-
-  // 내부 목데이터 → 내부 라우터 링크
-  return (
-    <Link to={`/law/${law.id}`} className={BASE_CLASS}>
-      <CardContent law={law} status={status} />
     </Link>
   )
 }
