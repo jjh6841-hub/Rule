@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
-const JOBS = ['직장인', '자영업자', '프리랜서', '학생', '무직']
+const JOBS = ['직장인', '자영업자', '프리랜서', '학생', '무직', '의료 종사자']
 const HOUSINGS = ['자가', '전세', '월세', '기숙사/기타']
 const FAMILIES = ['1인가구', '부부', '자녀있음']
 const VEHICLES = ['있음', '없음']
