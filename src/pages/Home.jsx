@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import LawCard from '../components/LawCard'
 import { searchLaws } from '../api/lawApi'
+import { mockLaws } from '../data/mockLaws'
 
 const CATEGORIES = ['전체', '주거', '청년', '창업·사업', '의료·건강', '육아·가족']
 
@@ -52,15 +53,30 @@ export default function Home() {
   const [laws, setLaws] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+  const [usingFallback, setUsingFallback] = useState(false)
 
   const fetchLaws = (category) => {
     let cancelled = false
     setLoading(true)
     setError(null)
+    setUsingFallback(false)
 
     searchLaws(CATEGORY_QUERIES[category])
-      .then((data) => { if (!cancelled) setLaws(data) })
-      .catch((err) => { if (!cancelled) setError(err.message) })
+      .then((data) => {
+        if (!cancelled) {
+          setLaws(data)
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          // API 실패 시 목데이터로 폴백
+          const fallback = category === '전체'
+            ? mockLaws.filter((l) => !l.medicalWorkerOnly)
+            : mockLaws.filter((l) => !l.medicalWorkerOnly && l.category === category)
+          setLaws(fallback)
+          setUsingFallback(true)
+        }
+      })
       .finally(() => { if (!cancelled) setLoading(false) })
 
     return () => { cancelled = true }
@@ -175,10 +191,30 @@ export default function Home() {
         {!loading && !error && (
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-base font-semibold text-gray-800">
-              법령 검색 결과
+              {usingFallback ? '샘플 법령' : '법령 검색 결과'}
               <span className="ml-2 text-sm font-normal text-gray-400">{filtered.length}건</span>
             </h2>
-            <span className="text-xs text-gray-400">법제처 제공 · 실시간</span>
+            <span className="text-xs text-gray-400">
+              {usingFallback ? '샘플 데이터' : '법제처 제공 · 실시간'}
+            </span>
+          </div>
+        )}
+
+        {/* API 미연결 안내 배너 */}
+        {usingFallback && !loading && (
+          <div className="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-2xl px-4 py-3 mb-4 text-sm">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d97706" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0 mt-0.5">
+              <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+              <line x1="12" y1="9" x2="12" y2="13" />
+              <line x1="12" y1="17" x2="12.01" y2="17" />
+            </svg>
+            <div>
+              <p className="font-medium text-amber-800">법제처 API에 연결할 수 없습니다</p>
+              <p className="text-amber-700 text-xs mt-0.5">
+                현재 샘플 데이터를 표시 중입니다.
+                실제 API는 <code className="bg-amber-100 px-1 rounded">npm run dev</code> 개발 서버에서 동작합니다.
+              </p>
+            </div>
           </div>
         )}
 

@@ -1,5 +1,10 @@
 const OC = 'jjh68412026'
-const BASE = '/law-api'
+
+// 개발: Vite 프록시(/law-api → http://www.law.go.kr/DRF)
+// 프로덕션: HTTPS 직접 호출 (CORS 허용 여부에 따라 동작)
+const BASE = import.meta.env.DEV
+  ? '/law-api'
+  : 'https://www.law.go.kr/DRF'
 
 // ─── 유틸 ──────────────────────────────────────────────────────
 
