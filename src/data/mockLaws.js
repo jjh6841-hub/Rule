@@ -1,0 +1,71 @@
+export const mockLaws = [
+  {
+    id: 1,
+    title: '전세사기피해자 지원 및 주거안정에 관한 특별법',
+    category: '주거',
+    status: '신규',
+    summary: '전세사기 피해자에게 긴급 주거 지원 및 법률 지원 제공',
+    effectDate: '2025-06-01',
+    benefit: '피해자 인정 시 LH 임시 거주 지원, 법률 구조 무료 신청 가능',
+    applyUrl: 'https://www.lh.or.kr',
+    tags: ['전세', '주거', '사기피해'],
+  },
+  {
+    id: 2,
+    title: '청년 월세 한시 특별지원 사업',
+    category: '청년',
+    status: '변경',
+    summary: '저소득 청년 1인 가구에게 매월 최대 20만원 월세 지원',
+    effectDate: '2025-03-01',
+    benefit: '만 19~34세 무주택 청년, 소득 기준 충족 시 최대 12개월 월세 지원',
+    applyUrl: 'https://www.myhome.go.kr',
+    tags: ['청년', '월세', '주거지원'],
+  },
+  {
+    id: 3,
+    title: '소상공인 희망리턴패키지 지원에 관한 규정',
+    category: '창업·사업',
+    status: '신규',
+    summary: '폐업 소상공인의 재창업 또는 재취업을 위한 종합 지원 프로그램',
+    effectDate: '2025-04-15',
+    benefit: '철거·폐기 비용 최대 250만원, 재취업 교육 수당 지원',
+    applyUrl: 'https://www.sbiz.or.kr',
+    tags: ['소상공인', '폐업', '재창업'],
+  },
+  {
+    id: 4,
+    title: '국민건강보험법 일부개정 – 실손보험 연계 본인부담 조정',
+    category: '의료·건강',
+    status: '변경',
+    summary: '실손보험 가입자의 과잉 의료 이용 억제를 위한 본인부담률 차등 적용',
+    effectDate: '2025-07-01',
+    benefit: '비급여 항목 이용 빈도에 따라 보험료 할인·할증 구조 변경',
+    applyUrl: 'https://www.nhis.or.kr',
+    tags: ['건강보험', '실손보험', '의료비'],
+  },
+  {
+    id: 5,
+    title: '근로자 육아휴직 급여 인상 및 사용 요건 완화',
+    category: '육아·가족',
+    status: '변경',
+    summary: '육아휴직 급여 상한 인상 및 배우자 동시 사용 허용 확대',
+    effectDate: '2025-05-01',
+    benefit: '첫 3개월 통상임금 100% 지급(상한 250만원), 부부 동시 휴직 가능',
+    applyUrl: 'https://www.ei.go.kr',
+    tags: ['육아휴직', '급여인상', '워라밸'],
+  },
+]
+
+export const categoryColors = {
+  주거: { bg: 'bg-blue-100', text: 'text-blue-700', border: 'border-blue-200' },
+  청년: { bg: 'bg-purple-100', text: 'text-purple-700', border: 'border-purple-200' },
+  '창업·사업': { bg: 'bg-orange-100', text: 'text-orange-700', border: 'border-orange-200' },
+  '의료·건강': { bg: 'bg-green-100', text: 'text-green-700', border: 'border-green-200' },
+  '육아·가족': { bg: 'bg-pink-100', text: 'text-pink-700', border: 'border-pink-200' },
+}
+
+export const statusStyles = {
+  신규: { bg: 'bg-[#1a3c6e]', text: 'text-white' },
+  변경: { bg: 'bg-amber-500', text: 'text-white' },
+  폐지: { bg: 'bg-red-500', text: 'text-white' },
+}
