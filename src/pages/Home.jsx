@@ -8,14 +8,16 @@ export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState('전체')
   const [searchQuery, setSearchQuery] = useState('')
 
-  const filtered = mockLaws.filter((law) => {
-    const matchCategory = selectedCategory === '전체' || law.category === selectedCategory
-    const matchSearch =
-      law.title.includes(searchQuery) ||
-      law.summary.includes(searchQuery) ||
-      law.tags.some((t) => t.includes(searchQuery))
-    return matchCategory && matchSearch
-  })
+  const filtered = [...mockLaws]
+    .sort((a, b) => new Date(b.effectDate) - new Date(a.effectDate))
+    .filter((law) => {
+      const matchCategory = selectedCategory === '전체' || law.category === selectedCategory
+      const matchSearch =
+        law.title.includes(searchQuery) ||
+        law.summary.includes(searchQuery) ||
+        law.tags.some((t) => t.includes(searchQuery))
+      return matchCategory && matchSearch
+    })
 
   const newCount = mockLaws.filter((l) => l.status === '신규').length
   const changedCount = mockLaws.filter((l) => l.status === '변경').length
