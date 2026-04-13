@@ -8,4 +8,13 @@ export default defineConfig({
     tailwindcss(),
     react(),
   ],
+  server: {
+    proxy: {
+      '/law-api': {
+        target: 'http://www.law.go.kr',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/law-api/, '/DRF'),
+      },
+    },
+  },
 })

@@ -104,4 +104,6 @@ export const statusStyles = {
   신규: { bg: 'bg-[#1a3c6e]', text: 'text-white' },
   변경: { bg: 'bg-amber-500', text: 'text-white' },
   폐지: { bg: 'bg-red-500', text: 'text-white' },
+  현행: { bg: 'bg-gray-500', text: 'text-white' },
+  제정: { bg: 'bg-[#1a3c6e]', text: 'text-white' },
 }
