@@ -7,7 +7,7 @@ import LawDetail from './pages/LawDetail'
 
 export default function App() {
   return (
-    <BrowserRouter basename="/Rule">
+    <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '') || '/'}>
       <div className="min-h-screen bg-[#f0f4f9]">
         <Navbar />
         <Routes>
